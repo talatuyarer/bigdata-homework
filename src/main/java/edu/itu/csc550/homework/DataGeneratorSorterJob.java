@@ -17,10 +17,10 @@ import java.util.Date;
  * Hello world!
  *
  */
-public class App extends Configured implements Tool
+public class DataGeneratorSorterJob extends Configured implements Tool
 {
-    public static void main( String[] args ) throws Exception {
-        int result = ToolRunner.run(new Configuration(), new App(), args);
+    public static void main(String[] args) throws Exception {
+        int result = ToolRunner.run(new Configuration(), new DataGeneratorSorterJob(), args);
         System.exit(result);
     }
 
@@ -31,9 +31,8 @@ public class App extends Configured implements Tool
      * @return exit code.
      * @throws Exception
      */
-    @Override
     public int run(String[] args) throws Exception {
-        Path outDir = new Path(App.class.getName() + System.currentTimeMillis());
+        Path outDir = new Path(DataGeneratorSorterJob.class.getName() + System.currentTimeMillis());
 
         Configuration conf = getConf();
 
@@ -44,8 +43,8 @@ public class App extends Configured implements Tool
         conf.set(MRJobConfig.MAP_JAVA_OPTS, "-Xmx" + (mapMb - 200) + "m");
 
         Job job = Job.getInstance(conf);
-        job.setJarByClass(App.class);
-        job.setJobName("sort-homework");
+        job.setJarByClass(DataGeneratorSorterJob.class);
+        job.setJobName("homework-datagenerator-sorter");
         FileOutputFormat.setOutputPath(job, outDir);
         job.setOutputKeyClass(IntWritable.class);
         job.setOutputValueClass(IntWritable.class);
