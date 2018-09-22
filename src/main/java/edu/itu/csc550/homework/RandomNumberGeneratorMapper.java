@@ -51,10 +51,10 @@ public class RandomNumberGeneratorMapper extends Mapper<WritableComparable, Writ
             randomValue.set(minValueSize + (valueSizeRange != 0 ? random.nextInt(valueSizeRange) : 0));
             context.write(randomKey, randomValue);
             //Reduce from total bytes
-            numBytesToWrite -= 2 * Integer.BYTES;
+            numBytesToWrite -= 4;
 
             //Update counters
-            context.getCounter(Counters.BYTES_WRITTEN).increment(2 * Integer.BYTES);
+            context.getCounter(Counters.BYTES_WRITTEN).increment(4);
             context.getCounter(Counters.RECORDS_WRITTEN).increment(1);
             if (++recordCount % 1000 == 0) {
                 context.setStatus(recordCount + " are written. " + numBytesToWrite + " bytes left.");

@@ -8,6 +8,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
@@ -32,16 +33,17 @@ public class DataGeneratorSorterJob extends Configured implements Tool
      * @throws Exception
      */
     public int run(String[] args) throws Exception {
-        Path outDir = new Path(DataGeneratorSorterJob.class.getName() + System.currentTimeMillis());
 
         Configuration conf = getConf();
-
+        
+        Path outDir = new Path(conf.get("homework.output-folder",DataGeneratorSorterJob.class.getName() + System.currentTimeMillis()));
+        
         int ioSortMb = conf.getInt(MRJobConfig.IO_SORT_MB, 512);
         int mapMb = Math.max(2 * ioSortMb, conf.getInt(MRJobConfig.MAP_MEMORY_MB, MRJobConfig.DEFAULT_MAP_MEMORY_MB));
         conf.setInt(MRJobConfig.NUM_MAPS, 10 * 1024 / mapMb);
         conf.setInt(MRJobConfig.MAP_MEMORY_MB, mapMb);
         conf.set(MRJobConfig.MAP_JAVA_OPTS, "-Xmx" + (mapMb - 200) + "m");
-
+        
         Job job = Job.getInstance(conf);
         job.setJarByClass(DataGeneratorSorterJob.class);
         job.setJobName("homework-datagenerator-sorter");
@@ -51,8 +53,8 @@ public class DataGeneratorSorterJob extends Configured implements Tool
         job.setInputFormatClass(DummyInputFormat.class);
         job.setMapperClass(RandomNumberGeneratorMapper.class);
         job.setReducerClass(DummyReducer.class);
-        job.setOutputFormatClass(SequenceFileOutputFormat.class);
-        job.setNumReduceTasks(1);
+        job.setOutputFormatClass(TextOutputFormat.class);
+        //job.setNumReduceTasks(1);
 
         Date startTime = new Date();
         System.out.println("Job started: " + startTime);
